@@ -65,11 +65,13 @@ module RingProperties (A : Set) (r : Ring A) where
     ∎
 
   -1*a+a-is-zero : (a : A) → inv one * a + a ≡ zero 
-  -1*a+a-is-zero a =  
-    cong (λ x → inv one * a + x) (≡-s (one-*-id-left a)) ≡-t
-    ≡-s (*-dist-+-right a (inv one) one) ≡-t    
-    cong (λ x → x * a) (inv-+-left one) ≡-t
-    zero*a-zero a 
+  -1*a+a-is-zero a = begin
+    inv one * a + a              ≡⟨ cong (λ x → inv one * a + x) (≡-s (one-*-id-left a)) ⟩
+    inv one * a + one * a        ≡⟨ ≡-s (*-dist-+-right a (inv one) one) ⟩
+    (inv one + one) * a          ≡⟨ cong (λ x → x * a) (inv-+-left one) ⟩
+    zero * a                     ≡⟨ zero*a-zero a  ⟩
+    zero
+    ∎
 
   *-inv-one-inv : (a : A) → inv one * a ≡ inv a
   *-inv-one-inv a = +-unique-inv a (inv one * a) (-1*a+a-is-zero a)
