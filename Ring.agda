@@ -7,10 +7,6 @@ open import Function
 
 open ≡-Reasoning
 
-infixl 0 _≡-t_
-_≡-t_ : {A : Set} → {a b c : A} → a ≡ b → b ≡ c → a ≡ c
-_≡-t_ refl refl = refl
-
 ≡-s : {A : Set} → {a b : A} → a ≡ b → b ≡ a
 ≡-s refl = refl
 
@@ -77,24 +73,46 @@ module RingProperties (A : Set) (r : Ring A) where
   *-inv-one-inv a = +-unique-inv a (inv one * a) (-1*a+a-is-zero a)
 
   x^3-1-eq : (x : A) → (x + inv one) * (x * x + x + one) ≡ (x * x * x) + (inv one) 
-  x^3-1-eq x = 
-    *-dist-+-right (x * x + x + one) x (inv one) ≡-t  
-    cong (λ y → y + (inv one * (x * x + x + one))) (*-dist-+-left x (x * x + x) one) ≡-t 
-    cong (λ y → y + x * one + inv one * (x * x + x + one)) (*-dist-+-left x (x * x) x) ≡-t
-    cong (λ y → y + x * x + x * one + inv one * (x * x + x + one)) (*-assoc x x x) ≡-t
-    cong (λ y → x * x * x + x * x + y + inv one * (x * x + x + one)) (one-*-id-right x) ≡-t
-    cong (λ y → x * x * x + x * x + x + y) (*-dist-+-left (inv one) (x * x + x) one) ≡-t 
-    cong (λ y → x * x * x + x * x + x + (inv one * (x * x + x) + y)) (one-*-id-right (inv one)) ≡-t
-    cong (λ y → x * x * x + x * x + x + (y + inv one)) (*-dist-+-left (inv one) (x * x) x) ≡-t 
-    cong (λ y → x * x * x + x * x + x + (y + inv one * x + inv one)) (*-inv-one-inv (x * x)) ≡-t 
-    cong (λ y → x * x * x + x * x + x + (inv (x * x) + y + inv one)) (*-inv-one-inv x) ≡-t
-    cong (λ y → x * x * x + x * x + x + (y + inv one)) (+-comm (inv (x * x)) (inv x)) ≡-t 
-    ≡-s (+-assoc (x * x * x + x * x) x ((inv x + inv (x * x) + inv one))) ≡-t
-    cong (λ y → x * x * x + x * x + (x + y)) (≡-s (+-assoc (inv x) (inv (x * x)) (inv one))) ≡-t
-    cong (λ y → x * x * x + x * x + y) (+-assoc x (inv x) (inv (x * x) + inv one)) ≡-t
-    cong (λ y → x * x * x + x * x + (y + (inv (x * x) + inv one))) (inv-+-right x) ≡-t
-    cong (λ y → x * x * x + x * x + y) (zero-+-id-left (inv (x * x) + inv one)) ≡-t
-    ≡-s (+-assoc (x * x * x) (x * x) (inv (x * x) + inv one)) ≡-t
-    cong (λ y → x * x * x + y) (+-assoc (x * x) (inv (x * x)) (inv one)) ≡-t
-    cong (λ y → x * x * x + (y + inv one)) (inv-+-right (x * x)) ≡-t
-    cong (λ y → x * x * x + y) (zero-+-id-left (inv one))
+  x^3-1-eq x = begin
+    (x + inv one) * (x * x + x + one)
+      ≡⟨ *-dist-+-right (x * x + x + one) x (inv one) ⟩
+    x * (x * x + x + one) + inv one * (x * x + x + one) 
+      ≡⟨ cong (λ y → y + (inv one * (x * x + x + one))) (*-dist-+-left x (x * x + x) one) ⟩
+    x * (x * x + x) + x * one + inv one * (x * x + x + one)
+      ≡⟨ cong (λ y → y + x * one + inv one * (x * x + x + one)) (*-dist-+-left x (x * x) x) ⟩
+    x * (x * x) + x * x + x * one + inv one * (x * x + x + one)
+      ≡⟨ cong (λ y → y + x * x + x * one + inv one * (x * x + x + one)) (*-assoc x x x) ⟩
+    x * x * x + x * x + x * one + inv one * (x * x + x + one)
+      ≡⟨ cong (λ y → x * x * x + x * x + y + inv one * (x * x + x + one)) (one-*-id-right x) ⟩
+    x * x * x + x * x + x + inv one * (x * x + x + one)
+      ≡⟨ cong (λ y → x * x * x + x * x + x + y) (*-dist-+-left (inv one) (x * x + x) one) ⟩
+    x * x * x + x * x + x + (inv one * (x * x + x) + inv one * one)
+     ≡⟨ cong (λ y → x * x * x + x * x + x + (inv one * (x * x + x) + y)) (one-*-id-right (inv one)) ⟩
+    x * x * x + x * x + x + (inv one * (x * x + x) + inv one)
+      ≡⟨ cong (λ y → x * x * x + x * x + x + (y + inv one)) (*-dist-+-left (inv one) (x * x) x) ⟩
+    x * x * x + x * x + x + (inv one * (x * x) + inv one * x + inv one)
+      ≡⟨ cong (λ y → x * x * x + x * x + x + (y + inv one * x + inv one)) (*-inv-one-inv (x * x)) ⟩
+    x * x * x + x * x + x + (inv (x * x) + inv one * x + inv one)
+      ≡⟨ cong (λ y → x * x * x + x * x + x + (inv (x * x) + y + inv one)) (*-inv-one-inv x) ⟩
+    x * x * x + x * x + x + (inv (x * x) + inv x + inv one)
+      ≡⟨ cong (λ y → x * x * x + x * x + x + (y + inv one)) (+-comm (inv (x * x)) (inv x)) ⟩
+    x * x * x + x * x + x + (inv x + inv (x * x) + inv one)
+      ≡⟨ ≡-s (+-assoc (x * x * x + x * x) x ((inv x + inv (x * x) + inv one))) ⟩
+    x * x * x + x * x + (x + (inv x + inv (x * x) + inv one))
+      ≡⟨ cong (λ y → x * x * x + x * x + (x + y)) (≡-s (+-assoc (inv x) (inv (x * x)) (inv one))) ⟩
+    x * x * x + x * x + (x + (inv x + (inv (x * x) + inv one)))
+      ≡⟨ cong (λ y → x * x * x + x * x + y) (+-assoc x (inv x) (inv (x * x) + inv one)) ⟩
+    x * x * x + x * x + (x + inv x + (inv (x * x) + inv one))
+      ≡⟨ cong (λ y → x * x * x + x * x + (y + (inv (x * x) + inv one))) (inv-+-right x) ⟩
+    x * x * x + x * x + (zero + (inv (x * x) + inv one))  
+      ≡⟨ cong (λ y → x * x * x + x * x + y) (zero-+-id-left (inv (x * x) + inv one)) ⟩
+    x * x * x + x * x + (inv (x * x) + inv one)
+      ≡⟨ ≡-s (+-assoc (x * x * x) (x * x) (inv (x * x) + inv one)) ⟩
+    x * x * x + (x * x + (inv (x * x) + inv one))
+      ≡⟨ cong (λ y → x * x * x + y) (+-assoc (x * x) (inv (x * x)) (inv one)) ⟩
+    x * x * x + (x * x + inv (x * x) + inv one)
+      ≡⟨ cong (λ y → x * x * x + (y + inv one)) (inv-+-right (x * x)) ⟩
+    x * x * x + (zero + inv one)
+      ≡⟨ cong (λ y → x * x * x + y) (zero-+-id-left (inv one)) ⟩
+    x * x * x + inv one 
+    ∎
