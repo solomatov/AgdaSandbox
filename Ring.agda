@@ -54,13 +54,15 @@ module RingProperties (A : Set) (r : Ring A) where
     ∎
 
   zero*a-zero : (a : A) → zero * a ≡ zero
-  zero*a-zero a = 
-    ≡-s (zero-+-id-right (zero * a)) ≡-t 
-    cong (λ x → zero * a + x) (≡-s (inv-+-right (zero * a))) ≡-t
-    +-assoc (zero * a) (zero * a) (inv (zero * a)) ≡-t 
-    cong (λ x → x + inv (zero * a)) (≡-s (*-dist-+-right a zero zero)) ≡-t
-    cong (λ x → x * a + inv (zero * a)) (zero-+-id-left zero) ≡-t
-    inv-+-right (zero * a)
+  zero*a-zero a = begin
+    zero * a                               ≡⟨ ≡-s (zero-+-id-right (zero * a)) ⟩
+    zero * a + zero                        ≡⟨ cong (λ x → zero * a + x) (≡-s (inv-+-right (zero * a))) ⟩
+    zero * a + (zero * a + inv (zero * a)) ≡⟨ +-assoc (zero * a) (zero * a) (inv (zero * a)) ⟩
+    zero * a + zero * a + inv (zero * a)   ≡⟨ cong (λ x → x + inv (zero * a)) (≡-s (*-dist-+-right a zero zero)) ⟩
+    (zero + zero) * a + inv (zero * a)     ≡⟨ cong (λ x → x * a + inv (zero * a)) (zero-+-id-left zero) ⟩
+    zero * a + inv (zero * a)              ≡⟨ inv-+-right (zero * a) ⟩
+    zero
+    ∎
 
   -1*a+a-is-zero : (a : A) → inv one * a + a ≡ zero 
   -1*a+a-is-zero a =  
