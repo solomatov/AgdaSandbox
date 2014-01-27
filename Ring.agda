@@ -5,6 +5,8 @@ open import Relation.Binary.Core
 open import Relation.Binary.PropositionalEquality
 open import Function
 
+open ≡-Reasoning
+
 infixl 0 _≡-t_
 _≡-t_ : {A : Set} → {a b c : A} → a ≡ b → b ≡ c → a ≡ c
 _≡-t_ refl refl = refl
@@ -13,11 +15,10 @@ _≡-t_ refl refl = refl
 ≡-s refl = refl
 
 
-record Ring (A : Set) : Set where
+record Ring (A : Set) : Set where 
   infixl 4 _+_
   infixl 5 _*_
-
-  field 
+  field
     _+_ : A → A → A
     _*_ : A → A → A
     zero : A
@@ -43,12 +44,14 @@ module RingProperties (A : Set) (r : Ring A) where
   open Ring r
 
   +-unique-inv : (a ia : A) → (ia + a ≡ zero) → (ia ≡ inv a)
-  +-unique-inv a ia eq = 
-    (≡-s (zero-+-id-right ia)) ≡-t
-    cong (λ x → ia + x) (≡-s (inv-+-right a)) ≡-t
-    +-assoc ia a (inv a) ≡-t
-    cong (λ x → x + inv a) eq ≡-t
-    zero-+-id-left (inv a)
+  +-unique-inv a ia eq = begin
+    ia                       ≡⟨ (≡-s (zero-+-id-right ia)) ⟩
+    ia + zero                ≡⟨ cong (λ x → ia + x) (≡-s (inv-+-right a)) ⟩
+    ia + (a + inv a)         ≡⟨ +-assoc ia a (inv a) ⟩
+    ia + a + inv a           ≡⟨ cong (λ x → x + inv a) eq ⟩
+    zero + inv a             ≡⟨ zero-+-id-left (inv a) ⟩
+    inv a
+    ∎
 
   zero*a-zero : (a : A) → zero * a ≡ zero
   zero*a-zero a = 
