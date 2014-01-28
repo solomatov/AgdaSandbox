@@ -7,10 +7,6 @@ open import Function
 
 open ≡-Reasoning
 
-≡-s : {A : Set} → {a b : A} → a ≡ b → b ≡ a
-≡-s refl = refl
-
-
 record Ring (A : Set) : Set where 
   infixl 4 _+_
   infixl 5 _*_
@@ -41,8 +37,8 @@ module RingProperties (A : Set) (r : Ring A) where
 
   +-unique-inv : (a ia : A) → (ia + a ≡ zero) → (ia ≡ inv a)
   +-unique-inv a ia eq = begin
-    ia                       ≡⟨ (≡-s (zero-+-id-right ia)) ⟩
-    ia + zero                ≡⟨ cong (λ x → ia + x) (≡-s (inv-+-right a)) ⟩
+    ia                       ≡⟨ (sym (zero-+-id-right ia)) ⟩
+    ia + zero                ≡⟨ cong (λ x → ia + x) (sym (inv-+-right a)) ⟩
     ia + (a + inv a)         ≡⟨ +-assoc ia a (inv a) ⟩
     ia + a + inv a           ≡⟨ cong (λ x → x + inv a) eq ⟩
     zero + inv a             ≡⟨ zero-+-id-left (inv a) ⟩
@@ -51,10 +47,10 @@ module RingProperties (A : Set) (r : Ring A) where
 
   zero*a-zero : (a : A) → zero * a ≡ zero
   zero*a-zero a = begin
-    zero * a                               ≡⟨ ≡-s (zero-+-id-right (zero * a)) ⟩
-    zero * a + zero                        ≡⟨ cong (λ x → zero * a + x) (≡-s (inv-+-right (zero * a))) ⟩
+    zero * a                               ≡⟨ sym (zero-+-id-right (zero * a)) ⟩
+    zero * a + zero                        ≡⟨ cong (λ x → zero * a + x) (sym (inv-+-right (zero * a))) ⟩
     zero * a + (zero * a + inv (zero * a)) ≡⟨ +-assoc (zero * a) (zero * a) (inv (zero * a)) ⟩
-    zero * a + zero * a + inv (zero * a)   ≡⟨ cong (λ x → x + inv (zero * a)) (≡-s (*-dist-+-right a zero zero)) ⟩
+    zero * a + zero * a + inv (zero * a)   ≡⟨ cong (λ x → x + inv (zero * a)) (sym (*-dist-+-right a zero zero)) ⟩
     (zero + zero) * a + inv (zero * a)     ≡⟨ cong (λ x → x * a + inv (zero * a)) (zero-+-id-left zero) ⟩
     zero * a + inv (zero * a)              ≡⟨ inv-+-right (zero * a) ⟩
     zero
@@ -62,8 +58,8 @@ module RingProperties (A : Set) (r : Ring A) where
 
   -1*a+a-is-zero : (a : A) → inv one * a + a ≡ zero 
   -1*a+a-is-zero a = begin
-    inv one * a + a              ≡⟨ cong (λ x → inv one * a + x) (≡-s (one-*-id-left a)) ⟩
-    inv one * a + one * a        ≡⟨ ≡-s (*-dist-+-right a (inv one) one) ⟩
+    inv one * a + a              ≡⟨ cong (λ x → inv one * a + x) (sym (one-*-id-left a)) ⟩
+    inv one * a + one * a        ≡⟨ sym (*-dist-+-right a (inv one) one) ⟩
     (inv one + one) * a          ≡⟨ cong (λ x → x * a) (inv-+-left one) ⟩
     zero * a                     ≡⟨ zero*a-zero a  ⟩
     zero
@@ -75,7 +71,7 @@ module RingProperties (A : Set) (r : Ring A) where
   x^3-1-eq : (x : A) → (x + inv one) * (x * x + x + one) ≡ (x * x * x) + (inv one) 
   x^3-1-eq x = begin
     (x + inv one) * (x * x + x + one)
-      ≡⟨ *-dist-+-right (x * x + x + one) x (inv one) ⟩
+      ≡⟨ *-dist-+-right _ _ _ ⟩
     x * (x * x + x + one) + inv one * (x * x + x + one) 
       ≡⟨ cong (λ y → y + (inv one * (x * x + x + one))) (*-dist-+-left x (x * x + x) one) ⟩
     x * (x * x + x) + x * one + inv one * (x * x + x + one)
@@ -97,9 +93,9 @@ module RingProperties (A : Set) (r : Ring A) where
     x * x * x + x * x + x + (inv (x * x) + inv x + inv one)
       ≡⟨ cong (λ y → x * x * x + x * x + x + (y + inv one)) (+-comm (inv (x * x)) (inv x)) ⟩
     x * x * x + x * x + x + (inv x + inv (x * x) + inv one)
-      ≡⟨ ≡-s (+-assoc (x * x * x + x * x) x ((inv x + inv (x * x) + inv one))) ⟩
+      ≡⟨ sym (+-assoc (x * x * x + x * x) x ((inv x + inv (x * x) + inv one))) ⟩
     x * x * x + x * x + (x + (inv x + inv (x * x) + inv one))
-      ≡⟨ cong (λ y → x * x * x + x * x + (x + y)) (≡-s (+-assoc (inv x) (inv (x * x)) (inv one))) ⟩
+      ≡⟨ cong (λ y → x * x * x + x * x + (x + y)) (sym (+-assoc (inv x) (inv (x * x)) (inv one))) ⟩
     x * x * x + x * x + (x + (inv x + (inv (x * x) + inv one)))
       ≡⟨ cong (λ y → x * x * x + x * x + y) (+-assoc x (inv x) (inv (x * x) + inv one)) ⟩
     x * x * x + x * x + (x + inv x + (inv (x * x) + inv one))
@@ -107,7 +103,7 @@ module RingProperties (A : Set) (r : Ring A) where
     x * x * x + x * x + (zero + (inv (x * x) + inv one))  
       ≡⟨ cong (λ y → x * x * x + x * x + y) (zero-+-id-left (inv (x * x) + inv one)) ⟩
     x * x * x + x * x + (inv (x * x) + inv one)
-      ≡⟨ ≡-s (+-assoc (x * x * x) (x * x) (inv (x * x) + inv one)) ⟩
+      ≡⟨ sym (+-assoc (x * x * x) (x * x) (inv (x * x) + inv one)) ⟩
     x * x * x + (x * x + (inv (x * x) + inv one))
       ≡⟨ cong (λ y → x * x * x + y) (+-assoc (x * x) (inv (x * x)) (inv one)) ⟩
     x * x * x + (x * x + inv (x * x) + inv one)
