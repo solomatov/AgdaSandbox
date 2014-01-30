@@ -62,7 +62,7 @@ succMN (suc n) m = begin
     ; +-assoc = +-assoc 
   }
 
-open MonoidProperties ℕ ℕ-monoid
+module MP = MonoidProperties ℕ ℕ-monoid
 
 +-unique-inv-ℕ : (a ia₁ ia₂ : ℕ) → (ia₁ + a ≡ zero) → (a + ia₂ ≡ zero) → (ia₁ ≡ ia₂)
-+-unique-inv-ℕ = +-unique-inv
++-unique-inv-ℕ = MP.+-unique-inv
