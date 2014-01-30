@@ -6,6 +6,7 @@ open import Data.Bool
 open import Relation.Binary.Core
 open import Relation.Binary.PropositionalEquality
 open import Function
+open import Monoid
 
 open ≡-Reasoning
 
@@ -13,12 +14,12 @@ open ≡-Reasoning
 +one zero = refl
 +one (suc n) = cong suc (+one n) 
 
-zero+left-id : (n : ℕ) → n + zero ≡ n
-zero+left-id zero = refl
-zero+left-id (suc n) = cong suc (zero+left-id n) 
+zero-+id-right : (n : ℕ) → n + zero ≡ n
+zero-+id-right zero = refl
+zero-+id-right (suc n) = cong suc (zero-+id-right n) 
 
-zero+right-id : (n : ℕ) → zero + n ≡ n
-zero+right-id n = refl
+zero-+id-left : (n : ℕ) → zero + n ≡ n
+zero-+id-left n = refl
 
 succMN : (n m : ℕ) → suc n + m ≡ n + suc m
 succMN zero m = refl
@@ -29,16 +30,34 @@ succMN (suc n) m = begin
   suc n + suc m
   ∎
 
-commPlus : (n m : ℕ) → n + m ≡ m + n
-commPlus zero m = begin 
-  zero + m          ≡⟨ zero+right-id _ ⟩
-  m                 ≡⟨ sym (zero+left-id _) ⟩
++-comm : (n m : ℕ) → n + m ≡ m + n
++-comm zero m = begin 
+  zero + m          ≡⟨ zero-+id-left _ ⟩
+  m                 ≡⟨ sym (zero-+id-right _) ⟩
   m + zero 
   ∎  
-commPlus (suc n) m = begin 
++-comm (suc n) m = begin 
   (suc n) + m       ≡⟨ refl ⟩ 
-  suc (n + m)       ≡⟨ cong suc (commPlus n m) ⟩
+  suc (n + m)       ≡⟨ cong suc (+-comm n m) ⟩
   suc (m + n)       ≡⟨ refl ⟩
   suc m + n ≡⟨ succMN m n  ⟩
   m + (suc n)
   ∎
+
++-assoc : (n m k : ℕ) → (n + m) + k ≡ n + (m + k)
++-assoc zero m k = refl
++-assoc (suc n) m k = begin
+  suc n + m + k ≡⟨ refl ⟩
+  suc (n + m + k) ≡⟨ cong suc (+-assoc n m k) ⟩
+  suc (n + (m + k)) ≡⟨ refl ⟩
+  suc n + (m + k)
+  ∎
+
+ℕ-monoid : Monoid ℕ
+ℕ-monoid = record {
+      _+_ = _+_ 
+    ; zero = zero  
+    ; zero-+id-left = zero-+id-left
+    ; zero-+id-right = zero-+id-right
+    ; +-assoc = +-assoc 
+  }
