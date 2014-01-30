@@ -4,6 +4,7 @@ open import Data.Bool
 open import Relation.Binary.Core
 open import Relation.Binary.PropositionalEquality
 open import Function
+open ≡-Reasoning
 
 
 record Ring (A : Set) : Set where 

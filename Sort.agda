@@ -9,7 +9,19 @@ open import Function
 
 open ≡-Reasoning
 
-data Sorted (A : Set) (cmp : A → A → Bool) : (l : List A) → Set where
-  empty : Sorted A cmp []
-  singleton : (a : A) → Sorted A cmp (a ∷ [])
 
+plusOne : (n : ℕ) → 1 + n ≡ n + 1
+plusOne zero = refl
+plusOne (suc n) = cong suc (plusOne n) 
+
+zeroOne : (n : ℕ) → zero + n ≡ n + zero
+zeroOne n = {!!}
+
+sucMN : (n m : ℕ) → suc n + m ≡ m + suc n
+sucMN n m = {!!}
+
+commPlus : (n m : ℕ) → n + m ≡ m + n
+commPlus zero m = zeroOne m
+commPlus (suc n) m = {!!}
+
+-- declare semi group. show that Nat is semigroup. and show some fact which is implied for Naat because it's semigroup
