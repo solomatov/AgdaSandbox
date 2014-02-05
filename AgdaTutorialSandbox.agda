@@ -7,6 +7,8 @@ open import Function
 
 open ≡-Reasoning
 
+-- Excercises from http://www.cse.chalmers.se/~ulfn/papers/afp08/tutorial.pdf
+
 data List (A : Set) : Set where
   [] : List A
   _∷_ : A → List A → List A
