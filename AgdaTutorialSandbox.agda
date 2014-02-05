@@ -6,6 +6,10 @@ open import Function
 
 open ≡-Reasoning
 
+data List (A : Set) : Set where
+  [] : List A
+  _∷_ : A → List A → List A
+
 data Vec (A : Set) : ℕ → Set where
   []   : Vec A zero
   _∷_  : {n : ℕ} → A → Vec A n → Vec A (suc n)
@@ -61,3 +65,24 @@ lem-tab-! (x ∷ v) = begin
   x ∷ tabulate (λ y → v ! y) ≡⟨ cong (λ z → x ∷ z) (lem-tab-! v) ⟩
   x ∷ v
   ∎
+
+-- Excercise 2.3
+data _⊆_ {A : Set} : List A → List A → Set where
+  stop : [] ⊆ []
+  drop : {y : A} {xs ys : List A} → xs ⊆ ys → xs       ⊆ (y ∷ ys)
+  keep : {x : A} {xs ys : List A} → xs ⊆ ys → (x ∷ xs) ⊆ (x ∷ ys)
+
+⊆-refl : {A : Set} {xs : List A} → xs ⊆ xs
+⊆-refl {A} {[]} = stop
+⊆-refl {A} {x ∷ xs} = keep ⊆-refl
+
+⊆-empty : {A : Set} {xs : List A} → [] ⊆ xs
+⊆-empty {A} {[]} = stop
+⊆-empty {A} {x ∷ xs} = drop ⊆-empty
+
+⊆-trans : {A : Set} {xs ys zs : List A} → xs ⊆ ys → ys ⊆ zs → xs ⊆ zs
+⊆-trans stop ys-zs = ⊆-empty
+⊆-trans (drop xs-ys) (drop ys-zs) = drop (⊆-trans (drop xs-ys) ys-zs)
+⊆-trans (drop xs-ys) (keep ys-zs) = drop (⊆-trans xs-ys ys-zs)
+⊆-trans (keep xs-ys) (drop ys-zs) = drop (⊆-trans (keep xs-ys) ys-zs)
+⊆-trans (keep xs-ys) (keep ys-zs) = keep (⊆-trans xs-ys ys-zs)
