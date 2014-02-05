@@ -2,6 +2,7 @@ module AgdaTutorialSandbox where
 
 open import Relation.Binary.PropositionalEquality
 open import Data.Nat
+open import Data.Bool
 open import Function
 
 open ≡-Reasoning
@@ -9,6 +10,7 @@ open ≡-Reasoning
 data List (A : Set) : Set where
   [] : List A
   _∷_ : A → List A → List A
+
 
 data Vec (A : Set) : ℕ → Set where
   []   : Vec A zero
@@ -86,3 +88,34 @@ data _⊆_ {A : Set} : List A → List A → Set where
 ⊆-trans (drop xs-ys) (keep ys-zs) = drop (⊆-trans xs-ys ys-zs)
 ⊆-trans (keep xs-ys) (drop ys-zs) = drop (⊆-trans (keep xs-ys) ys-zs)
 ⊆-trans (keep xs-ys) (keep ys-zs) = keep (⊆-trans xs-ys ys-zs)
+
+data SubList {A : Set} : List A → Set where
+  [] : SubList []
+  _∷_  : (x : A) → {xs : List A} → SubList xs → SubList (x ∷ xs)
+  skip : {x : A} → {xs : List A} → SubList xs → SubList (x ∷ xs)
+
+forget : {A : Set} {xs : List A} → SubList xs → List A
+forget [] = []
+forget (x ∷ xs₁) = x ∷ forget xs₁
+forget (skip {x} xs₁) = forget xs₁
+
+lem-forget : {A : Set} {xs : List A} (zs : SubList xs) → forget zs ⊆ xs
+lem-forget [] = stop
+lem-forget (x ∷ zs) = keep (lem-forget zs)
+lem-forget (skip zs) = drop (lem-forget zs)
+
+filter′ : {A : Set} → (A → Bool) → (xs : List A) → SubList xs
+filter′ f [] = []
+filter′ f (x ∷ xs) with f x 
+... | true = x ∷ filter′ f xs
+... | false = skip (filter′ f xs)
+
+complement : {A : Set} {xs : List A} → SubList xs → SubList xs
+complement [] = []
+complement (x ∷ xs₁) = skip (complement xs₁)
+complement (skip {x} xs₁) = x ∷ (complement xs₁)
+
+sublists : {A : Set} {xs : List A} → List (SubList xs)
+sublists {A} {[]} = []
+sublists {A} {x ∷ xs} = {!!}
+
