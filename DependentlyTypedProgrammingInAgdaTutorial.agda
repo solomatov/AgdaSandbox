@@ -1,4 +1,4 @@
-module AgdaTutorialSandbox where
+module DependentlyTypedProgrammingInAgdaTutorial where
 
 open import Relation.Binary.PropositionalEquality
 open import Data.Nat
