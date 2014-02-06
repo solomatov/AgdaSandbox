@@ -37,5 +37,5 @@ find p [] = not-found all[]
 find p (x ∷ xs) with p x | inspect p x
 ... | true  | Reveal_is_.[ eq ] = found [] x (true-is-true eq) xs
 ... | false | Reveal_is_.[ eq ] with find p xs
+... | not-found rest = not-found (false-is-false eq :all: rest)
 find p (x₁ ∷ .(xs ++ y ∷ ys)) | false | Reveal_is_.[ eq ] | found xs y x ys = found (x₁ ∷ xs) y x ys 
-find p (x₁ ∷ xs)              | false | Reveal_is_.[ eq ] | not-found rest = not-found (false-is-false eq :all: rest)
