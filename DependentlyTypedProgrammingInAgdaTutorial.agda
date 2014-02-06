@@ -116,8 +116,3 @@ complement : {A : Set} {xs : List A} → SubList xs → SubList xs
 complement [] = []
 complement (x ∷ xs₁) = skip (complement xs₁)
 complement (skip {x} xs₁) = x ∷ (complement xs₁)
-
-sublists : {A : Set} {xs : List A} → List (SubList xs)
-sublists {A} {[]} = []
-sublists {A} {x ∷ xs} = {!!}
-
